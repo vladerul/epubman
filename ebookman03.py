@@ -124,7 +124,7 @@ def repair_html_text():
     txt = txt.replace("  ", " ")
 
     # corectează cuvintele după dicționar
-    with open('G:\My Drive\PersonaleVlad\SOFT propriu\ebookmanager\epubco4.dic', 'r', encoding='utf-8') as file:
+    with open('epubco4.dic', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
             txt = txt.replace(row[0], row[1])
