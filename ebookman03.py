@@ -417,7 +417,7 @@ def dic_correct():
     global html_text, old_html_text
     txt = html_text.decode('UTF-8')
     
-    with open('G:\My Drive\PersonaleVlad\SOFT propriu\epub_corector\epubco4.dic', 'r', encoding='utf-8') as file:
+    with open('epubco4.dic', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
             print(row)
