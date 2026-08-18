@@ -1,1 +1,2 @@
-Is created for Romanian language.
+Is created for Romanian language, for .epub files, repairing text's common formatting errors, replacing styles, simplifying / erasing unnecesary styles, reducing file size, making more readable...
+
