@@ -7,6 +7,7 @@ import zipfile
 import tempfile
 import re
 import csv
+from collections import Counter
 
 epub_name = "Deschide un fișier"
 html_name = "Nedefinit"
@@ -243,16 +244,10 @@ def back():
 
 def span_find_update():
     global html_text
-    items = []
     txt = html_text.decode("UTF-8")
     p = re.compile(r'<span class="([^"]+)">')
     ft = p.findall(txt)
-    while len(ft) > 0:
-        ftname = ft[0]
-        ftc = ft.count(ft[0])
-        items.append(('<span class="' + ftname + '">', ftc))
-        for n in range(0, ftc):
-            ft.remove(ftname)
+    items = [('<span class="' + name + '">', count) for name, count in Counter(ft).items()]
     items.sort(reverse=True)
     span_find_cb['values'] = items
     cmm_frame.update_idletasks()
@@ -273,16 +268,10 @@ def span_execute():
 
 def para_find_update():
     global html_text
-    items = []
     txt = html_text.decode("UTF-8")
     p = re.compile(r'<p class="([^"]+)">')
     ft = p.findall(txt)
-    while len(ft) > 0:
-        ftname = ft[0]
-        ftc = ft.count(ft[0])
-        items.append(('<p class="' + ftname + '">', ftc))
-        for n in range(0, ftc):
-            ft.remove(ftname)
+    items = [('<p class="' + name + '">', count) for name, count in Counter(ft).items()]
     items.sort(reverse=True)
     para_find_cb['values'] = items
     cmm_frame.update_idletasks()
@@ -303,18 +292,10 @@ def para_execute():
 
 def paraspan_find_update():
     global html_text
-    items = ['definit local']
-    for n in items:
-        items.remove(n)
     txt = html_text.decode("UTF-8")
     p = re.compile(r'<p([^>]*)><span([^>]*)')
     ft = p.findall(txt)
-    while len(ft) > 0:
-        ftname = ft[0]
-        ftc = ft.count(ft[0])
-        items.append(('<p'+ ft[0][0] + '><span' + ft[0][1] + '>', ftc))
-        for n in range(0, ftc):
-            ft.remove(ftname)
+    items = [('<p' + g[0] + '><span' + g[1] + '>', count) for g, count in Counter(ft).items()]
     items.sort(reverse=True)
     paraspan_find['values'] = items
     cmm_frame.update_idletasks()
