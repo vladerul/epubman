@@ -52,13 +52,8 @@ def repair_directory():
                                 zout.writestr(item2, zin.read(item2.filename))
 
             # replace with the temp archive
-            try:
-                os.rename(epub_name, backup_path(epub_name))
-            except:
-                os.remove(backup_path(epub_name))
-                os.rename(epub_name, backup_path(epub_name))
-
-            os.rename(tmpname, epub_name)
+            os.replace(epub_name, backup_path(epub_name))
+            os.replace(tmpname, epub_name)
     
     open_directory_text.set(path)
 
@@ -206,13 +201,8 @@ def update_zip():
                     zout.writestr(item, zin.read(item.filename))
 
     # replace with the temp archive
-    try:
-        os.rename(epub_name, backup_path(epub_name))
-    except:
-        os.remove(backup_path(epub_name))
-        os.rename(epub_name, backup_path(epub_name))
-
-    os.rename(tmpname, epub_name)
+    os.replace(epub_name, backup_path(epub_name))
+    os.replace(tmpname, epub_name)
 
     # now add filename with its new data
     with zipfile.ZipFile(epub_name, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
