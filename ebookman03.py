@@ -15,6 +15,8 @@ old_html_text = b"\x32\x32"
 opf_name ="nedefinit"
 opf_text = b"\x32\x32"
 
+PREVIEW_LIMIT = 80000  # câte caractere se afișează în panoul din stânga
+
 def is_html(name):
     return name.lower().endswith(('.html', '.xhtml'))
 
@@ -219,6 +221,12 @@ def update_zip():
     with zipfile.ZipFile(epub_name, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr(html_name, html_text)
 
+def set_file_content(txt):
+    file_text.config(state='normal')
+    file_text.delete('1.0', 'end')
+    file_text.insert('1.0', txt)
+    file_text.config(state='disabled')
+
 def analysis():
     global html_text
     char_analysis()
@@ -226,9 +234,7 @@ def analysis():
     para_find_update()
     paraspan_find_update()
 
-    file_content.set(html_text.decode('UTF-8')[0:80000])
-    text_frame.update_idletasks()
-    canvas_l.config(scrollregion=canvas_l.bbox("all"))
+    set_file_content(html_text.decode('UTF-8')[:PREVIEW_LIMIT])
 
 def back():
     global html_text, old_html_text
@@ -440,22 +446,18 @@ MainWindow.geometry("1200x800")
 MainWindow.title("EBook Manager")
 
 
-canvas_l = tk.Canvas(MainWindow)
-canvas_l.pack(side='left', fill='both')
-
-scrollbar = tk.Scrollbar(MainWindow, orient="vertical", command=canvas_l.yview)
-scrollbar.pack(side='left',fill='y')
-canvas_l.configure(yscrollcommand=scrollbar.set)
-text_frame = tk.Frame(canvas_l)
+text_frame = tk.Frame(MainWindow)
 text_frame.pack(side='left', fill='both')
 
-canvas_l.create_window((20, 20), anchor='nw', window=text_frame)
+scrollbar = tk.Scrollbar(text_frame, orient="vertical")
+scrollbar.pack(side='right', fill='y')
 
-file_content = StringVar(value='Continut fisier .epub')
-tk.Label(text_frame, textvariable=file_content, wraplength='480', justify='left').grid(row=0, column=0, sticky='news')
+file_text = tk.Text(text_frame, width=58, wrap='word', padx=20, pady=20,
+                    yscrollcommand=scrollbar.set, state='disabled')
+file_text.pack(side='left', fill='both', expand=True)
+scrollbar.config(command=file_text.yview)
 
-text_frame.update_idletasks()
-canvas_l.config(scrollregion=canvas_l.bbox("all"))
+set_file_content('Continut fisier .epub')
 
 canvas_r = tk.Canvas(MainWindow)
 canvas_r.pack(side='left', fill='both', expand=True)
