@@ -8,9 +8,6 @@ import tempfile
 import re
 import csv
 
-
-test3 = "after all is ok 2"
-
 epub_name = "Deschide un fișier"
 html_name = "Nedefinit"
 html_text = b"\x32\x32"
@@ -437,7 +434,7 @@ MainWindow.geometry("1200x800")
 MainWindow.title("EBook Manager")
 
 
-canvas_l = tk.Canvas(MainWindow, bg='green')
+canvas_l = tk.Canvas(MainWindow)
 canvas_l.pack(side='left', fill='both')
 
 scrollbar = tk.Scrollbar(MainWindow, orient="vertical", command=canvas_l.yview)
@@ -454,7 +451,7 @@ tk.Label(text_frame, textvariable=file_content, wraplength='480', justify='left'
 text_frame.update_idletasks()
 canvas_l.config(scrollregion=canvas_l.bbox("all"))
 
-canvas_r = tk.Canvas(MainWindow, bg='blue')
+canvas_r = tk.Canvas(MainWindow)
 canvas_r.pack(side='left', fill='both', expand=True)
 
 scrollbar2 = tk.Scrollbar(MainWindow, orient="vertical", command=canvas_r.yview)
@@ -462,7 +459,7 @@ scrollbar2.pack(side='right',fill='y')
 
 canvas_r.configure(yscrollcommand=scrollbar2.set)
 
-cmm_frame = tk.Frame(canvas_r, bg='lightblue')
+cmm_frame = tk.Frame(canvas_r)
 # cmm_frame.pack(anchor='nw')
 canvas_r.create_window(0, 0, anchor='nw', height=1200, window=cmm_frame)
 
