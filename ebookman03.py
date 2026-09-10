@@ -8,9 +8,8 @@ import tempfile
 import re
 import csv
 
-test = "after all is ok"
 
-test2= "after all is ok 2"
+test3 = "after all is ok 2"
 
 epub_name = "Deschide un fișier"
 html_name = "Nedefinit"
