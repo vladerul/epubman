@@ -27,9 +27,7 @@ def backup_path(name):
 def repair_directory():
     global epub_name, html_name, html_text, old_html_text, opf_text, opf_name
     path = filedialog.askdirectory()
-    print(path)
     for item in os.listdir(path):
-        print(item)
         if item.lower().endswith('.epub'):
             epub_name = os.path.join(path, item)
             tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(epub_name))
@@ -42,14 +40,12 @@ def repair_directory():
                         if is_html(item2.filename):
                             html_text = zin.read(item2.filename)
                             html_name = item2.filename
-                            print(html_name)
                             repair_html_text()
                             zout.writestr(item2, html_text)
                         else:    
                             if item2.filename.lower().endswith('.opf'):
                                 opf_text = zin.read(item2.filename)
                                 opf_name = item2.filename
-                                print(opf_name)
                                 repair_opf_text()
                                 zout.writestr(item2, opf_text)
                             else:
@@ -258,7 +254,6 @@ def span_execute():
     lst1 = lst1[(lst1.find('{')+1):lst1.find('}')]
     lst2 = span_replace_result.get()
     txt = html_text.decode("UTF-8")
-    print(lst1 + ' ' + lst2)
     p = re.compile(lst1 + r'([^<]+)</span>')
     txt = p.sub(lst2, txt)
     old_html_text = html_text
@@ -280,7 +275,6 @@ def para_execute():
     lst1 = lst1[(lst1.find('{')+1):lst1.find('}')]
     lst2 = para_replace_result.get()
     txt = html_text.decode("UTF-8")
-    print(lst1 + ' ' + lst2)
     p = re.compile(lst1)
     txt = p.sub(lst2, txt)
     old_html_text = html_text
@@ -302,7 +296,6 @@ def paraspan_execute():
     lst1 = lst1[(lst1.find('{') + 1):lst1.find('}')]
     lst2 = paraspan_replace_result.get()
     txt = html_text.decode("UTF-8")
-    print(lst1 + ' ' + lst2)
     p = re.compile(lst1 + r'([^<]+)</span></p>')
     txt = p.sub(lst2, txt)
     old_html_text = html_text
@@ -408,8 +401,6 @@ def dic_correct():
     with open('epubco4.dic', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
-            print(row)
-            print(row[1])
             txt = txt.replace(row[0], row[1])
     
     old_html_text = html_text
