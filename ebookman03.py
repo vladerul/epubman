@@ -230,21 +230,20 @@ def set_file_content(txt):
 
 def analysis():
     global html_text
+    txt = html_text.decode('UTF-8')
     char_analysis()
-    span_find_update()
-    para_find_update()
-    paraspan_find_update()
+    span_find_update(txt)
+    para_find_update(txt)
+    paraspan_find_update(txt)
 
-    set_file_content(html_text.decode('UTF-8')[:PREVIEW_LIMIT])
+    set_file_content(txt[:PREVIEW_LIMIT])
 
 def back():
     global html_text, old_html_text
     html_text = old_html_text
     analysis()
 
-def span_find_update():
-    global html_text
-    txt = html_text.decode("UTF-8")
+def span_find_update(txt):
     p = re.compile(r'<span class="([^"]+)">')
     ft = p.findall(txt)
     items = [('<span class="' + name + '">', count) for name, count in Counter(ft).items()]
@@ -266,9 +265,7 @@ def span_execute():
     html_text = txt.encode()
     analysis()
 
-def para_find_update():
-    global html_text
-    txt = html_text.decode("UTF-8")
+def para_find_update(txt):
     p = re.compile(r'<p class="([^"]+)">')
     ft = p.findall(txt)
     items = [('<p class="' + name + '">', count) for name, count in Counter(ft).items()]
@@ -290,9 +287,7 @@ def para_execute():
     html_text = txt.encode()
     analysis()
 
-def paraspan_find_update():
-    global html_text
-    txt = html_text.decode("UTF-8")
+def paraspan_find_update(txt):
     p = re.compile(r'<p([^>]*)><span([^>]*)')
     ft = p.findall(txt)
     items = [('<p' + g[0] + '><span' + g[1] + '>', count) for g, count in Counter(ft).items()]
