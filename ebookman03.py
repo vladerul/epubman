@@ -24,11 +24,20 @@ def is_html(name):
 def backup_path(name):
     return os.path.splitext(name)[0] + "_bk.epub"
 
+def swap_in(new_name, target):
+    # păstrează originalul: copia _bk se face o singură dată, la prima reparare
+    bk = backup_path(target)
+    if os.path.exists(bk):
+        os.remove(target)
+    else:
+        os.replace(target, bk)
+    os.replace(new_name, target)
+
 def repair_directory():
     global epub_name, html_name, html_text, old_html_text, opf_text, opf_name
     path = filedialog.askdirectory()
     for item in os.listdir(path):
-        if item.lower().endswith('.epub'):
+        if item.lower().endswith('.epub') and not item.lower().endswith('_bk.epub'):
             epub_name = os.path.join(path, item)
             tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(epub_name))
             os.close(tmpfd)
@@ -52,8 +61,7 @@ def repair_directory():
                                 zout.writestr(item2, zin.read(item2.filename))
 
             # replace with the temp archive
-            os.replace(epub_name, backup_path(epub_name))
-            os.replace(tmpname, epub_name)
+            swap_in(tmpname, epub_name)
     
     open_directory_text.set(path)
 
@@ -201,8 +209,7 @@ def update_zip():
                     zout.writestr(item, zin.read(item.filename))
 
     # replace with the temp archive
-    os.replace(epub_name, backup_path(epub_name))
-    os.replace(tmpname, epub_name)
+    swap_in(tmpname, epub_name)
 
     # now add filename with its new data
     with zipfile.ZipFile(epub_name, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
