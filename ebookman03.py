@@ -15,14 +15,20 @@ old_html_text = b"\x32\x32"
 opf_name ="nedefinit"
 opf_text = b"\x32\x32"
 
+def is_html(name):
+    return name.lower().endswith(('.html', '.xhtml'))
+
+def backup_path(name):
+    return os.path.splitext(name)[0] + "_bk.epub"
+
 def repair_directory():
     global epub_name, html_name, html_text, old_html_text, opf_text, opf_name
     path = filedialog.askdirectory()
     print(path)
     for item in os.listdir(path):
         print(item)
-        if item[-4:] == "epub":
-            epub_name = path+'/'+item
+        if item.lower().endswith('.epub'):
+            epub_name = os.path.join(path, item)
             tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(epub_name))
             os.close(tmpfd)
 
@@ -30,14 +36,14 @@ def repair_directory():
                 with zipfile.ZipFile(tmpname, 'w') as zout:
                     zout.comment = zin.comment  # preserve the comment
                     for item2 in zin.infolist():
-                        if item2.filename[-5:] == ".html":
+                        if is_html(item2.filename):
                             html_text = zin.read(item2.filename)
                             html_name = item2.filename
                             print(html_name)
                             repair_html_text()
                             zout.writestr(item2, html_text)
                         else:    
-                            if item2.filename[-4:] == ".opf":
+                            if item2.filename.lower().endswith('.opf'):
                                 opf_text = zin.read(item2.filename)
                                 opf_name = item2.filename
                                 print(opf_name)
@@ -48,10 +54,10 @@ def repair_directory():
 
             # replace with the temp archive
             try:
-                os.rename(epub_name, epub_name[:-5] + "_bk.epub")
+                os.rename(epub_name, backup_path(epub_name))
             except:
-                os.remove(epub_name[:-5] + "_bk.epub")
-                os.rename(epub_name, epub_name[:-5] + "_bk.epub")
+                os.remove(backup_path(epub_name))
+                os.rename(epub_name, backup_path(epub_name))
 
             os.rename(tmpname, epub_name)
     
@@ -178,7 +184,7 @@ def open_file():
     epub_name = filedialog.askopenfilename()
     with zipfile.ZipFile(epub_name, 'r') as zin:
         for item in zin.infolist():
-            if item.filename[-4:] == "html":
+            if is_html(item.filename):
                 html_text = zin.read(item.filename)
                 html_name = item.filename
 
@@ -202,10 +208,10 @@ def update_zip():
 
     # replace with the temp archive
     try:
-        os.rename(epub_name, epub_name[:-5] + "_bk.epub")
+        os.rename(epub_name, backup_path(epub_name))
     except:
-        os.remove(epub_name[:-5] + "_bk.epub")
-        os.rename(epub_name, epub_name[:-5] + "_bk.epub")
+        os.remove(backup_path(epub_name))
+        os.rename(epub_name, backup_path(epub_name))
 
     os.rename(tmpname, epub_name)
 
