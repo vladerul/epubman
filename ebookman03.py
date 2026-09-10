@@ -8,6 +8,8 @@ import tempfile
 import re
 import csv
 
+test = "today 10 sep"
+
 epub_name = "Deschide un fișier"
 html_name = "Nedefinit"
 html_text = b"\x32\x32"
