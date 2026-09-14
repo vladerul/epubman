@@ -16,8 +16,6 @@ old_html_text = b"\x32\x32"
 opf_name ="nedefinit"
 opf_text = b"\x32\x32"
 
-PREVIEW_LIMIT = 80000  # câte caractere se afișează în panoul din stânga
-
 # dicționarul stă lângă script, nu în directorul de lucru
 DIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'epubco4.dic')
 
@@ -228,7 +226,7 @@ def analysis():
     para_find_update(txt)
     paraspan_find_update(txt)
 
-    set_file_content(txt[:PREVIEW_LIMIT])
+    set_file_content(txt)
 
 def back():
     global html_text, old_html_text
