@@ -127,12 +127,8 @@ def repair_html_text():
     p = re.compile(r'\t')
     txt = p.sub(r' ', txt)
 
-    # repară spațiile multiple
-    txt = txt.replace("    ", " ")
-    txt = txt.replace("   ", " ")
-    txt = txt.replace("  ", " ")
-    txt = txt.replace("  ", " ")
-    txt = txt.replace("  ", " ")
+    # repară spațiile multiple (orice șir de spații devine unul singur)
+    txt = re.sub(r' {2,}', ' ', txt)
 
     # corectează cuvintele după dicționar
     with open(DIC_PATH, 'r', encoding='utf-8') as file:
