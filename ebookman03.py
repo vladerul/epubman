@@ -18,6 +18,9 @@ opf_text = b"\x32\x32"
 
 PREVIEW_LIMIT = 80000  # câte caractere se afișează în panoul din stânga
 
+# dicționarul stă lângă script, nu în directorul de lucru
+DIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'epubco4.dic')
+
 def is_html(name):
     return name.lower().endswith(('.html', '.xhtml'))
 
@@ -132,7 +135,7 @@ def repair_html_text():
     txt = txt.replace("  ", " ")
 
     # corectează cuvintele după dicționar
-    with open('epubco4.dic', 'r', encoding='utf-8') as file:
+    with open(DIC_PATH, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         for row in reader:
             txt = txt.replace(row[0], row[1])
