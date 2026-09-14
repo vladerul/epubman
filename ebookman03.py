@@ -193,6 +193,7 @@ def open_file():
 
 def update_zip():
     global epub_name, html_name, html_text
+    pull_from_editor()
     # generate a temp file
     tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(epub_name))
     os.close(tmpfd)
@@ -213,10 +214,25 @@ def update_zip():
         zf.writestr(html_name, html_text)
 
 def set_file_content(txt):
-    file_text.config(state='normal')
+    # păstrează poziția de derulare, ca să nu sară la început după fiecare operație
+    yview = file_text.yview()[0]
     file_text.delete('1.0', 'end')
     file_text.insert('1.0', txt)
-    file_text.config(state='disabled')
+    file_text.edit_reset()  # istoricul undo pornește de la conținutul nou
+    file_text.yview_moveto(yview)
+
+def pull_from_editor():
+    # preia modificările scrise de mână în panoul din stânga
+    global html_text, old_html_text
+    data = file_text.get('1.0', 'end-1c').encode()
+    if data != html_text:
+        old_html_text = html_text
+        html_text = data
+
+def repair_current_html():
+    # butonul lucrează pe textul din editor; repair_directory nu trece prin aici
+    pull_from_editor()
+    repair_html_text()
 
 def analysis():
     global html_text
@@ -244,6 +260,7 @@ def span_find_update(txt):
 
 def span_execute():
     global html_text, old_html_text
+    pull_from_editor()
     lst1 = span_find_result.get()
     lst1 = lst1[(lst1.find('{')+1):lst1.find('}')]
     lst2 = span_replace_result.get()
@@ -265,6 +282,7 @@ def para_find_update(txt):
 
 def para_execute():
     global html_text, old_html_text
+    pull_from_editor()
     lst1 = para_find_result.get()
     lst1 = lst1[(lst1.find('{')+1):lst1.find('}')]
     lst2 = para_replace_result.get()
@@ -286,6 +304,7 @@ def paraspan_find_update(txt):
 
 def paraspan_execute():
     global html_text, old_html_text
+    pull_from_editor()
     lst1 = paraspan_find_result.get()
     lst1 = lst1[(lst1.find('{') + 1):lst1.find('}')]
     lst2 = paraspan_replace_result.get()
@@ -320,7 +339,8 @@ scrollbar = tk.Scrollbar(text_frame, orient="vertical")
 scrollbar.pack(side='right', fill='y')
 
 file_text = tk.Text(text_frame, width=58, wrap='word', padx=20, pady=20,
-                    yscrollcommand=scrollbar.set, state='disabled')
+                    yscrollcommand=scrollbar.set, undo=True, autoseparators=True,
+                    maxundo=-1)
 file_text.pack(side='left', fill='both', expand=True)
 scrollbar.config(command=file_text.yview)
 
@@ -363,7 +383,7 @@ tk.Label(cmm_frame, text='').grid(row=10, column=0)
 tk.Label(cmm_frame, text='Litere românești').grid(row=11, column=1, sticky='w')
 char_analysis_result = StringVar(value='Analizează caractere ...')
 tk.Label(cmm_frame, textvariable=char_analysis_result, wraplength='480').grid(row=12, column=1, sticky='w')
-tk.Button(cmm_frame, text='Repară fișierul html', command=repair_html_text).grid(row=12, column=5)
+tk.Button(cmm_frame, text='Repară fișierul html', command=repair_current_html).grid(row=12, column=5)
 
 # SEPARATOARE
 tk.Label(cmm_frame, text=' ').grid(row=20, column=0)
