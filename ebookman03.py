@@ -335,14 +335,28 @@ MainWindow.title("EBook Manager")
 text_frame = tk.Frame(MainWindow)
 text_frame.pack(side='left', fill='both')
 
-scrollbar = tk.Scrollbar(text_frame, orient="vertical")
-scrollbar.pack(side='right', fill='y')
-
 file_text = tk.Text(text_frame, width=58, wrap='word', padx=20, pady=20,
-                    yscrollcommand=scrollbar.set, undo=True, autoseparators=True,
-                    maxundo=-1)
-file_text.pack(side='left', fill='both', expand=True)
-scrollbar.config(command=file_text.yview)
+                    undo=True, autoseparators=True, maxundo=-1)
+scrollbar = tk.Scrollbar(text_frame, orient="vertical", command=file_text.yview)
+scrollbar_h = tk.Scrollbar(text_frame, orient="horizontal", command=file_text.xview)
+file_text.config(yscrollcommand=scrollbar.set, xscrollcommand=scrollbar_h.set)
+
+file_text.grid(row=0, column=0, sticky='nsew')
+scrollbar.grid(row=0, column=1, sticky='ns')
+text_frame.rowconfigure(0, weight=1)
+text_frame.columnconfigure(0, weight=1)
+
+wrap_var = tk.BooleanVar(value=True)
+
+def toggle_wrap():
+    # fără wrap, fiecare linie logică este o singură linie afișată, așa că
+    # cursorul poate fi pus după ultimul caracter (de ex. după ">")
+    if wrap_var.get():
+        file_text.config(wrap='word')
+        scrollbar_h.grid_remove()
+    else:
+        file_text.config(wrap='none')
+        scrollbar_h.grid(row=1, column=0, sticky='ew')
 
 set_file_content('Continut fisier .epub')
 
@@ -375,6 +389,10 @@ tk.Label(cmm_frame, text='Nume fișier epub').grid(row=3, column=1, sticky='w')
 open_file_text = StringVar(value='Deschide fișier tip .epub')
 tk.Label(cmm_frame, textvariable=open_file_text, wraplength='480').grid(row=3, column=3, sticky='w')
 tk.Button(cmm_frame, text='Open file', command=open_file).grid(row=3, column=4)
+
+# WRAP
+tk.Checkbutton(cmm_frame, text='Word wrap', variable=wrap_var,
+               command=toggle_wrap).grid(row=4, column=1, sticky='w')
 
 # SEPARATOARE
 tk.Label(cmm_frame, text='').grid(row=10, column=0)
