@@ -379,7 +379,11 @@ splitter.add(right_frame, minsize=260, stretch='always')
 
 cmm_frame = tk.Frame(canvas_r)
 # cmm_frame.pack(anchor='nw')
-canvas_r.create_window(0, 0, anchor='nw', height=1200, window=cmm_frame)
+canvas_r.create_window(0, 0, anchor='nw', window=cmm_frame)
+
+# zona de derulare urmărește conținutul real, oricât de înalt ar fi
+cmm_frame.bind('<Configure>',
+               lambda e: canvas_r.config(scrollregion=canvas_r.bbox('all')))
 
 # SEPARATOARE
 tk.Label(cmm_frame, text='').grid(row=0, column=0)
