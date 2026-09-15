@@ -84,6 +84,10 @@ def repair_html_text():
     html_text = txt
     txt = html_text.decode('UTF-8')
 
+    # normalizează sfârșiturile de linie: fișierele cu \r\n scăpau de regulile
+    # scrise pentru \n (de ex. gruparea span-urilor de pe rând nou)
+    txt = txt.replace("\r\n", "\n").replace("\r", "\n")
+
     # repară caractere speciale
     txt = txt.replace("&acirc;", "â")
     txt = txt.replace("&Acirc;", "Â")
