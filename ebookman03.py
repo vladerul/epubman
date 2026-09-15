@@ -86,6 +86,7 @@ def repair_html_text():
 
     # repară caractere speciale
     txt = txt.replace("&acirc;", "â")
+    txt = txt.replace("&Acirc;", "Â")
     txt = txt.replace("&icirc;", "î")
     txt = txt.replace("&Icirc;", "Î")
     txt = txt.replace("&uuml;", "ü")
@@ -105,6 +106,7 @@ def repair_html_text():
     txt = txt.replace("î", "â")
     txt = txt.replace("â ", "î ")
     txt = txt.replace("â,", "î,")
+    txt = txt.replace("â.", "î.")
     txt = txt.replace(" â", " î")
     txt = txt.replace("eâ", "eî")
     txt = txt.replace("aâ", "aî")
@@ -332,8 +334,11 @@ MainWindow.geometry("1200x800")
 MainWindow.title("EBook Manager")
 
 
-text_frame = tk.Frame(MainWindow)
-text_frame.pack(side='left', fill='both')
+splitter = tk.PanedWindow(MainWindow, orient='horizontal',
+                          sashwidth=8, sashrelief='raised', sashpad=1)
+splitter.pack(fill='both', expand=True)
+
+text_frame = tk.Frame(splitter)
 
 file_text = tk.Text(text_frame, width=58, wrap='word', padx=20, pady=20,
                     undo=True, autoseparators=True, maxundo=-1)
@@ -345,6 +350,7 @@ file_text.grid(row=0, column=0, sticky='nsew')
 scrollbar.grid(row=0, column=1, sticky='ns')
 text_frame.rowconfigure(0, weight=1)
 text_frame.columnconfigure(0, weight=1)
+splitter.add(text_frame, minsize=200, stretch='always')
 
 wrap_var = tk.BooleanVar(value=True)
 
@@ -360,13 +366,16 @@ def toggle_wrap():
 
 set_file_content('Continut fisier .epub')
 
-canvas_r = tk.Canvas(MainWindow)
+right_frame = tk.Frame(splitter)
+
+canvas_r = tk.Canvas(right_frame)
 canvas_r.pack(side='left', fill='both', expand=True)
 
-scrollbar2 = tk.Scrollbar(MainWindow, orient="vertical", command=canvas_r.yview)
+scrollbar2 = tk.Scrollbar(right_frame, orient="vertical", command=canvas_r.yview)
 scrollbar2.pack(side='right',fill='y')
 
 canvas_r.configure(yscrollcommand=scrollbar2.set)
+splitter.add(right_frame, minsize=260, stretch='always')
 
 cmm_frame = tk.Frame(canvas_r)
 # cmm_frame.pack(anchor='nw')
@@ -464,11 +473,8 @@ tk.Button(cmm_frame, text='Execute', command=paraspan_execute).grid(row=52, colu
 tk.Label(cmm_frame, text=' ').grid(row=60, column=0)
 
 
-
 # SEPARATOARE
 tk.Label(cmm_frame, text=' ').grid(row=70, column=0)
-
-
 tk.Label(cmm_frame, text='Stiluri simple').grid(row=71, column=1, sticky='w')
 style_analysis_result = StringVar(value='Analizează stiluri simple...')
 tk.Label(cmm_frame, textvariable=style_analysis_result).grid(row=72, rowspan=2, column=1)
@@ -476,7 +482,6 @@ tk.Label(cmm_frame, textvariable=style_analysis_result).grid(row=72, rowspan=2, 
 
 # SEPARATOARE
 tk.Label(cmm_frame, text=' ').grid(row=100, column=0)
-
 tk.Button(cmm_frame, text='Back', command=back).grid(row=101, column=1)
 tk.Button(cmm_frame, text='Save', command=update_zip).grid(row=101, column=5)
 
